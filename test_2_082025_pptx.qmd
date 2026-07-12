@@ -1,0 +1,1062 @@
+---
+title: "Foundations in Hypothesis Testing"
+author: "<br><br><span style='font-size:25px;'><strong>Lesley Chapman Hannah, Ph.D., M.S.</strong></span><br>College of Graduate Studies<br>Northeast Ohio Medical University"
+format: pptx
+
+execute:
+  echo: true
+  warning: false
+  message: false
+---
+
+## Learning Objectives
+::: {style="font-size:0.6em"}
+By the end of this lecture, students should be able to:
+
+- define **hypothesis testing** as a formal decision framework built on estimation
+- explain why the workflow begins with the **estimand**
+- distinguish the roles of the **estimand**, **model**, **test statistic**, **uncertainty**, and **p-value**
+- identify when a mean difference, difference in proportions, odds ratio, or rate ratio is the primary target
+- interpret the p-value in context without treating it as the whole analysis
+- explain why effect size should be interpreted first, uncertainty second, and the p-value last
+:::
+---
+
+
+
+### Transition from Statistical Foundations to Hypothesis Testing
+
+::: {style="font-size:0.6em"}
+- hypothesis testing builds on the concepts developed in earlier lectures by integrating sample summaries, probability models, sampling variability, standard errors, and confidence intervals into a formal inferential procedure
+
+As a review:
+
+- `descriptive statistics` summarize observed data through quantities such as sample means, proportions, and measures of variability
+- `probability models` characterize the behavior of data under specified assumptions about the population or data-generating process
+- `sampling distributions` provide the theoretical basis for understanding variability in sample-based estimates across repeated studies
+
+:::
+
+---
+
+### Transition from Statistical Foundations to Hypothesis Testing
+
+::: {style="font-size:0.6em"}
+- hypothesis testing builds on the concepts developed in earlier lectures by integrating sample summaries, probability models, sampling variability, standard errors, and confidence intervals into a formal inferential procedure
+
+As a review:
+
+- `estimation procedures` yield point estimates and corresponding standard errors for population parameters
+- `confidence intervals` quantify statistical uncertainty and define ranges of parameter values supported by the observed data
+- `hypothesis testing` uses these components to formally evaluate whether the observed data are compatible with a null hypothesis regarding a population parameter
+
+Approaches allow researchers to determine whether an observed treatment effect, biomarker association, or group difference is larger than would reasonably be expected from random sampling variability alone under a null hypothesis of no effect or no association
+:::
+
+---
+
+## Why This Matters in Biomedical Data Science
+
+::: {style="font-size:0.6em"}
+hypothesis tests provide a way to compare observations with what would be expected under a null assumption
+
+Analysts are often asked to evaluate whether a signal is statistically meaningful
+
+Examples include:
+
+- whether a biomarker is associated with tumor response
+- whether a patient subgroup has a different response probability
+- whether tumor burden changes after therapy
+- whether a clinical feature is associated with progression risk
+- whether a model term improves explanation of an outcome
+
+
+:::
+
+---
+
+### Hypothesis Test : Definition
+
+::: {style="font-size:0.6em"}
+
+**hypothesis test** is defined as:
+
+> a method that uses sample data to decide between two competing claims [hypotheses] about a population characteristic
+
+Where:
+
+The null hypothesis represents the default population claim and the alternative hypothesis represents the competing scientific claim evaluated using the data
+
+**Null hypothesis $H_0$**
+
+- claim about a population characteristic that is initially assumed to be true  
+- serves as the reference point for evaluating evidence  
+
+**Alternative hypothesis $H_A$**
+
+- competing claim about the same population characteristic  
+- represents the type of difference or association the study is designed to detect  
+
+:::
+
+---
+
+
+
+### Hypothesis Testing: A Stepwise Approach
+
+::: {style="font-size:0.62em"}
+
+**Statement of the Problem**
+
+1. Describe the population characteristic of interest
+2. State the null hypothesis, $H_0$
+3. State the alternative hypothesis, $H_A$
+4. Select the significance level, $\alpha$
+
+**Analysis**
+
+5. Display the test statistic, with the hypothesized value from $H_0$ substituted into the formula
+6. Check that required assumptions are reasonable
+7. Calculate all quantities in the test statistic and calculate the test statistic itself
+8. Determine the p-value associated with the observed test statistic
+
+**Conclusion**
+
+9. State the conclusion: reject $H_0$ if p-value $\leq \alpha$, and fail to reject $H_0$ otherwise. Then state the conclusion in the context of the problem, including the significance level.
+:::
+
+---
+
+### Hypothesis Testing: An Oncology Example
+
+::: {style="font-size:0.78em"}
+
+Hypothesis testing evaluates whether observed sample evidence supports or contradicts a proposed explanation about a population
+
+Primary question:
+
+> Is the probability of tumor response to therapy higher among patients with a targeted biomarker than among patients without the biomarker?
+
+:::
+
+---
+
+### Describe the Population Characteristic of Interest
+
+::: {style="font-size:0.6em"}
+
+**Step 1**: Describe the population characteristic
+
+`population characteristic`: unknown population-level quantity the hypothesis test is designed to evaluate
+
+
+Example:
+
+$$
+p=\text{population probability of tumor reduction}
+$$
+:::
+
+---
+
+### State the Null and Alternative Hypothesis
+
+::: {style="font-size:0.6em"}
+
+**Step 2**: State the null hypothesis $H_0$
+
+**null hypothesis $H_0$**: claim about a population characteristic that is initially assumed to be true
+
+- provides the baseline explanation for the observed data
+- serves as the reference model against which the observed data are evaluated
+
+$$
+H_0 : p = 0.5
+$$
+
+- probability of tumor response equals 50%
+
+:::
+
+---
+
+### State the Null and Alternative Hypothesis
+
+::: {style="font-size:0.5em"}
+
+
+**Step 3**: State the alternative hypothesis $H_A$
+
+**alternative hypothesis $H_A$**: competing claim suggesting the population characteristic differs from the null hypothesis
+
+different forms of the alternative hypothesis reflect different scientific questions about the population parameter and determine whether statistical evidence is evaluated in one direction or in both directions relative to the null hypothesis value
+
+Two-Sided Alternative Hypothesis
+
+$$
+H_A:p \neq 0.50
+$$
+
+- Asks: Is the population response probability different from 50%?
+
+- asks whether the true response probability is different from 50% in either direction
+
+- both higher and lower response probabilities count as evidence against H_0
+
+One-Sided Alternative Hypothesis
+
+$$
+H_A:p>0.50
+$$
+
+- Asks: Does the biomarker improve response probability?
+
+- asks whether the response probability is greater than 50%
+
+- only increases count as evidence against $H_0$
+
+- Essentially: if the observed response probability were actually lower than 50% this would not support this alternative hypothesis
+
+
+:::
+
+---
+
+### Significance levels and Type I/II Errors
+
+::: {style="font-size:0.55em"}
+
+**4. Select Significance Level $\alpha$**
+
+**significance level $alpha$** : probability threshold used to define evidence strong enough to reject the null hypothesis
+
+- smaller α → stricter evidence required
+- larger α → easier to reject $H_0$
+
+Hypothesis testing decisions can produce two major categories of statistical error:
+
+- rejecting $H_0$ when it is actually true
+- failing to reject $H_0$ when it is actually false
+ 
+**Type I Error**: error of rejecting $H_0$ when $H_0$ is true [$\leftarrow$ significance levels controls this error probability]
+
+  - $\alpha$: probability of a Type I error
+
+  e.x.: concluding that a biomarker is associated with response when it is not 
+  
+**Type II Error**: failing to reject the null hypothesis [$H_0$] when the null hypothesis [$H_0$] is actually false
+
+  - $\beta$ : probability of a Type II error
+
+  e.x.: failing to detect a biologically meaningful signal  
+  
+:::
+
+---
+
+### Interpreting the Significance Level
+
+::: {style="font-size:0.6em"}
+
+Choosing $\alpha$ reflects how much risk of a Type I error is acceptable given the scientific question
+
+
+Common thresholds for $\alpha$:
+
+- α=0.05
+- α=0.01
+
+If $\alpha = 0.05$:
+
+- reject $H_0$ if p-value < 0.05 : statistical significance
+- in repeated testing when $H_0$ is true about 5% of tests will incorrectly reject $H_0$
+- 5% probability of falsely concluding that an effect exists when the null hypothesis is true
+
+If $\alpha = 0.01$:
+
+- reject $H_0$ if p-value < 0.01 : statistical significance
+- in repeated testing when $H_0$ is true about 1% of tests will incorrectly reject $H_0$
+- 1% probability of falsely concluding that an effect exists when the null hypothesis is true
+- fewer false positives are expected  
+
+:::
+
+---
+
+### Display the Test Statistic
+
+::: {style="font-size:0.6em"}
+
+**5. Display test statistic that will be used in analysis**
+
+`test statistic` : numerical quantity calculated from sample data used to decide whether to reject or fail to reject $H_0$
+
+Since the characteristic of interest is a population proportion:
+
+$$
+p = \text{population probability of tumor response}
+$$
+
+- parameter being tested is a proportion
+- **one-sample z statistic** measure comparing an observed sample proportion to the null hypothesis proportion $H_0$
+
+
+
+:::
+
+---
+
+### Display the Test Statistic
+
+::: {style="font-size:0.6em"}
+
+- different test statistics can be used for hypothesis tests
+- each statistic quantifies how much the observed sample varies from the null hypothesis
+
+Many hypothesis tests use a statistic with this structure:
+
+$$
+\text{test statistic}
+=
+\frac{\text{estimate} - \text{null value}}{\text{standard error}}
+$$
+
+Where:
+
+- **estimate**: sample-based estimate of the population characteristic
+- **null value**: value stated in $H_0$
+- **standard error**: estimated variability of the estimator across repeated samples
+
+
+:::
+
+---
+
+### Display the Test Statistic
+
+::: {style="font-size:0.6em"}
+
+
+Choice of test statistic depends on:
+
+- type of outcome variable  
+- population characteristic being tested  
+- statistical model used for the data  
+
+Examples include:
+
+| Test statistic | Use Description |
+|---|---|
+| z statistic | population proportions and some large-sample mean tests |
+| t statistic | population means with estimated variability |
+| chi-square statistic $\chi^2$ | categorical data and contingency tables |
+| F statistic | comparing variability across groups in ANOVA |
+| likelihood ratio statistic $G^2$ | comparing nested statistical models |
+
+:::
+
+---
+
+### Display the Test Statistic
+
+::: {style="font-size:0.6em"}
+
+**5. Display test statistic that will be used in analysis**
+
+- one-sample z statistic measures how far the observed response proportion differs from the null response probability after accounting for expected sampling variability
+
+$$
+z = \frac{\text{estimate [observed value] - expected [null]}}{\text{standard error}} =
+\frac{
+\hat{p} - p_0
+}{
+\sqrt{
+\frac{
+p_0(1-p_0)
+}{n}
+}
+}
+$$
+
+Where:
+
+- $\hat{p}$: observed tumor response proportion in the sample  
+- $p_0$: hypothesized response probability under the null hypothesis  
+- $n$: sample size  
+- denominator: standard error expected if $H_0$ were true  
+
+
+
+:::
+
+---
+
+
+
+### Display the Test Statistic
+
+::: {style="font-size:0.6em"}
+
+**5. Display test statistic that will be used in analysis**
+
+
+Hypothesis:
+
+> determine whether the population tumor response probability is greater than 50%
+
+As a result:
+
+- [large] positive z statistics support $H_A$
+- [large] negative z statistics do not support $H_A$
+
+Interpretation:
+
+- z statistic near 0 → observed response proportion is consistent with $H_0$ 
+- large positive z → observed response proportion is much larger than expected under $H_0$  
+- large negative z → observed response proportion is much smaller than expected under $H_0$
+
+:::
+
+---
+
+
+
+### Hypothesis Test for Tumor Response Probability
+
+::: {style="font-size:0.55em"}
+
+Suppose you have a dataset of 120 biomarker-positive cancer patients
+
+The variable response is binary:
+
+1 = tumor response observed
+
+0 = tumor response not observed
+
+Observed response proportion $\hat{p}$ estimates the population response probability p
+
+$\hat{p}$: observed sample proportion [averge across all responses in dataset]
+
+$p_0$: null hypothesis proportion [p = 50%]
+```{r, echo=FALSE}
+library(tidyverse)
+
+set.seed(101)
+
+n <- 120
+p_true <- 0.62
+
+tumor_response_df <- tibble(
+  patient_id = 1:n,
+  response = rbinom(n, size = 1, prob = p_true)
+)
+
+head(tumor_response_df)
+```
+
+:::
+
+---
+
+### Hypothesis Test for Tumor Response Probability
+
+::: {style="font-size:0.5em"}
+
+
+
+```{r}
+p0 <- 0.50
+
+summary_df <- tumor_response_df |>
+  summarise(
+    n = n(),
+    p_hat = mean(response)
+  ) |>
+  mutate(
+    se_null = sqrt(p0 * (1 - p0) / n),
+    z = (p_hat - p0) / se_null,
+    p_value = 1 - pnorm(z)
+  )
+
+summary_df
+```
+
+**Code Explanation**
+
+`p0 <- 0.50` $\rightarrow$ define the null hypothesis response probability: $H_0:p=0.50$  
+
+find total number of patients (`n`) and observed sample response proportion (`p_hat`)
+
+`summarise(`
+  `n = n(),`
+  `p_hat = mean(response)`
+`)`
+
+compute standard error expected under the null hypothesis
+
+`se_null = sqrt(p0 * (1 - p0) / n)`
+
+compute one-sample z statistic
+
+`z = (p_hat - p0) / se_null`
+
+compute right-tailed p-value from the standard normal distribution $H_A:p>0.50$
+
+`p_value = 1 - pnorm(z)`
+:::
+
+---
+
+### Hypothesis Test for Tumor Response Probability
+
+::: {style="font-size:0.6em"}
+
+
+
+```{r}
+p0 <- 0.50
+
+summary_df <- tumor_response_df |>
+  summarise(
+    n = n(),
+    p_hat = mean(response)
+  ) |>
+  mutate(
+    se_null = sqrt(p0 * (1 - p0) / n),
+    z = (p_hat - p0) / se_null,
+    p_value = 1 - pnorm(z)
+  )
+
+summary_df
+```
+
+**Interpretation**
+
+- observed response proportion: $p_{hat} = 0.55$
+- z statistic: $z = 1.10$
+- sample proportion is approximately 1.1 standard errors above the null hypothesis value
+- p=0.137
+- fail to reject $H_0$ : sample provides insufficient evidence that the population tumor response probability is greater than 50%
+:::
+
+---
+
+### Check Assumptions
+
+::: {style="font-size:0.6em"}
+
+**Step 6. Check model assumptions**
+
+- checking assumptions helps validate test conditions
+- test statistic and p-value are reliable when the assumptions underlying the hypothesis test are approximately satisfied
+
+one-sample z test depends on the following assumptions:
+
+- observations are independent  
+- outcome is binary [response vs no response]  
+- data follow a binomial model  
+- sample size is large enough for the normal approximation  
+
+:::
+---
+
+### Calculate test statistic and determine p-value
+
+::: {style="font-size:0.6em"}
+
+**Steps 7: Calculate test statistic and relevant values**
+
+**Task**: Collect a new sample [n=100] and address the following:
+
+> If the true population tumor response probability is 0.50, how likely would it be to observe a sample response proportion at least as large as the one observed?
+
+Null hypothesis:
+
+$$
+H_0: p = 0.50
+$$
+
+Alternative hypothesis:
+
+$$
+H_A: p > 0.50
+$$
+
+
+
+:::
+
+---
+
+### Calculate test statistic and determine p-value
+
+::: {style="font-size:0.5em"}
+
+**Steps 7: Calculate test statistic and relevant values**
+
+- calculate observed test statistic: **one-sample z statistic** 
+
+Suppose:
+
+$\alpha$: 0.05
+
+$\hat{p}$ = 0.64 [observed sample tumor response probability is 64%]
+
+$p_0$ = 0.5
+
+n = 100
+
+Calculate standard error:
+
+measure of how much the sample proportion would typically vary across repeated random samples when $p_0=0.50$
+
+```{r, echo=FALSE}
+p_hat <- 0.64
+p0 <- 0.50
+n <- 100
+
+se <- sqrt((p0 * (1 - p0)) / n)
+
+cat("Standard error =", se)
+```
+
+
+:::
+
+---
+
+### Calculate test statistic and determine p-value
+
+::: {style="font-size:0.5em"}
+
+**Steps 7: Calculate test statistic and relevant values**
+
+
+
+Calculate z statistic:
+
+$$
+z=\frac{0.64-0.5}{\sqrt{\frac{0.5(1-0.5)}{100}}}
+$$
+
+```{r, echo=FALSE}
+p_hat <- 0.64
+p0 <- 0.50
+n <- 100
+
+z <- (p_hat - p0) / sqrt((p0 * (1 - p0)) / n)
+
+cat("Z-score =", z, "\n",
+    "p-value =", 1 - pnorm(2.8))
+```
+
+- observed sample proportion is 2.8 standard errors above the null hypothesis value of 0.50 $\rightarrow$ evidence that the population response probability is greater than 50%
+- p-value is less than $\alpha = 0.05$ we reject $H_0$
+- sample provides evidence that the population tumor response probability is greater than 50%
+:::
+
+---
+
+### Calculate test statistic and determine p-value
+
+::: {style="font-size:0.6em"}
+
+**Steps 8: Determine p-value associated with test statistic**
+
+**p-value** is:
+
+- measure of inconsistency between the hypothesized value for a population characteristic and the observed sample
+- probability of obtaining a test statistic value at least as inconsistent with 
+ as what was observed
+ - quantifies the strength of evidence against $H_0$
+ 
+In research example:
+
+$$
+p = \text{population probability of tumor response among biomarker-positive patients}
+$$
+:::
+
+---
+
+
+### Visualizing the p-Value
+
+::: {style="font-size:0.5em"}
+
+```{r, echo=FALSE, fig.width=6, fig.height=4}
+# observed z statistic
+
+z_obs <- 2.8
+
+# critical value for alpha = 0.05 (one-sided)
+z_crit <- qnorm(0.95)
+
+# standard normal distribution
+z_df <- tibble(
+  z = seq(-4, 4, length.out = 1000),
+  density = dnorm(z)
+)
+
+plot <- ggplot(z_df, aes(x = z, y = density)) +
+
+  geom_line(size = 1) +
+
+  # shaded p-value region
+  geom_area(
+    data = filter(z_df, z >= z_obs),
+    fill = "red",
+    alpha = 0.4
+  ) +
+
+  # observed z statistic
+  geom_vline(
+    xintercept = z_obs,
+    linetype = "dashed",
+    size = 1
+  ) +
+
+  # significance threshold
+  geom_vline(
+    xintercept = z_crit,
+    color = "blue",
+    linetype = "dotted",
+    size = 1
+  ) +
+
+  labs(
+    x = "z statistic under H0",
+    y = "Density"
+  ) +
+
+  theme_bw()
+
+plot
+```
+
+
+
+**Interpretation**
+
+bell-shaped curve represents the null distribution of the z statistic assuming: $H_0: p = 0.50$
+
+Interpretation of regions:
+
+- values near the center of the curve are commonly expected if $H_0$ is true  
+- values far into the tail are less likely under $H_0$
+
+
+
+:::
+
+---
+
+### Visualizing the p-Value
+
+::: {style="font-size:0.4em"}
+
+```{r, echo=FALSE, fig.width=6, fig.height=4}
+# observed z statistic
+
+z_obs <- 2.8
+
+# critical value for alpha = 0.05 (one-sided)
+z_crit <- qnorm(0.95)
+
+# standard normal distribution
+z_df <- tibble(
+  z = seq(-4, 4, length.out = 1000),
+  density = dnorm(z)
+)
+
+plot <- ggplot(z_df, aes(x = z, y = density)) +
+
+  geom_line(size = 1) +
+
+  # shaded p-value region
+  geom_area(
+    data = filter(z_df, z >= z_obs),
+    fill = "red",
+    alpha = 0.4
+  ) +
+
+  # observed z statistic
+  geom_vline(
+    xintercept = z_obs,
+    linetype = "dashed",
+    size = 1
+  ) +
+
+  # significance threshold
+  geom_vline(
+    xintercept = z_crit,
+    color = "blue",
+    linetype = "dotted",
+    size = 1
+  ) +
+
+  labs(
+    x = "z statistic under H0",
+    y = "Density"
+  ) +
+
+  theme_bw()
+
+plot
+```
+
+
+**Plot Interpretation**
+
+Blue Line: critical value for $\alpha=0.05$
+
+- standard normal distribution for a one-sided hypothesis test with: $\alpha=0.05$
+- z-score has 95% of the standard normal distribution below value: `qnorm(0.95) = 1.645`
+- identify cutoff where only 5% of the distribution lies to the right: $P(Z \geq 1.645) = 0.05$
+
+
+:::
+
+---
+
+### Visualizing the p-Value
+
+::: {style="font-size:0.4em"}
+
+```{r, echo=FALSE, fig.width=4, fig.height=2}
+# observed z statistic
+
+z_obs <- 2.8
+
+# critical value for alpha = 0.05 (one-sided)
+z_crit <- qnorm(0.95)
+
+# standard normal distribution
+z_df <- tibble(
+  z = seq(-4, 4, length.out = 1000),
+  density = dnorm(z)
+)
+
+plot <- ggplot(z_df, aes(x = z, y = density)) +
+
+  geom_line(size = 1) +
+
+  # shaded p-value region
+  geom_area(
+    data = filter(z_df, z >= z_obs),
+    fill = "red",
+    alpha = 0.4
+  ) +
+
+  # observed z statistic
+  geom_vline(
+    xintercept = z_obs,
+    linetype = "dashed",
+    size = 1
+  ) +
+
+  # significance threshold
+  geom_vline(
+    xintercept = z_crit,
+    color = "blue",
+    linetype = "dotted",
+    size = 1
+  ) +
+
+  labs(
+    x = "z statistic under H0",
+    y = "Density"
+  ) +
+
+  theme_bw()
+
+plot
+```
+
+
+
+
+**Plot Interpretation**
+
+If the null hypothesis is true:
+
+- about 95% of z statistics fall below 1.645  
+- about 5% fall above 1.645 
+
+```{r}
+qnorm(0.95)
+```
+
+
+observed value falls in the upper tail of the null distribution
+
+- if the observed z statistic falls far into the right tail: evidence supports $H_A$
+
+- if the observed z statistic falls near the center: insufficient evidence against $H_0$
+
+- if the observed z statistic falls into the left tail  
+
+  → the data move in the opposite direction from the alternative hypothesis
+  → results do not provide evidence against $H_0$ in the direction required by the alternative hypothesis $H_A : p > 0.5$
+
+:::
+
+---
+
+### Visualizing the p-Value
+
+::: {style="font-size:0.4em"}
+
+```{r, echo=FALSE, fig.width=4, fig.height=2}
+# observed z statistic
+
+z_obs <- 2.8
+
+# critical value for alpha = 0.05 (one-sided)
+z_crit <- qnorm(0.95)
+
+# standard normal distribution
+z_df <- tibble(
+  z = seq(-4, 4, length.out = 1000),
+  density = dnorm(z)
+)
+
+plot <- ggplot(z_df, aes(x = z, y = density)) +
+
+  geom_line(size = 1) +
+
+  # shaded p-value region
+  geom_area(
+    data = filter(z_df, z >= z_obs),
+    fill = "red",
+    alpha = 0.4
+  ) +
+
+  # observed z statistic
+  geom_vline(
+    xintercept = z_obs,
+    linetype = "dashed",
+    size = 1
+  ) +
+
+  # significance threshold
+  geom_vline(
+    xintercept = z_crit,
+    color = "blue",
+    linetype = "dotted",
+    size = 1
+  ) +
+
+  labs(
+    x = "z statistic under H0",
+    y = "Density"
+  ) +
+
+  theme_bw()
+
+plot
+```
+
+
+**Plot Interpretation**
+
+If the null hypothesis is true:
+
+- about 95% of z statistics fall below 1.645  
+- about 5% fall above 1.645 
+
+```{r}
+qnorm(0.95)
+```
+
+
+**Interpretation**
+  
+red region represents the p-value: $P(Z \geq 2.8 \mid H_0)$
+
+
+- sample provides evidence against the null hypothesis  
+
+:::
+
+---
+
+### State the Statistical Conclusion
+
+::: {style="font-size:0.6em"}
+
+**Step 9: state conclusion**
+
+- final step of hypothesis testing is making a statistical decision based on the observed evidence
+
+Notes on comparing the observed p-value and pre-selected significance level: $\alpha$
+
+p-value decision rule:
+
+- reject $H_0$ if: p≤α
+- fail to reject $H_0$ otherwise
+
+Interpretation:
+
+- rejecting $H_0$ → evidence against the null hypothesis
+- failing to reject $H_0$ → insufficient evidence against the null hypothesis
+
+Note: failing to reject $H_0$ does NOT prove the null hypothesis is true, instead, it means the sample does not provide sufficiently strong evidence against it
+
+Consider:
+
+- small samples may fail to detect real effects  
+- high variability may weaken statistical evidence  
+- absence of evidence is not the same as evidence of absence  
+
+:::
+
+---
+
+
+### State the Scientific Conclusion
+
+::: {style="font-size:0.6em"}
+
+**Step 9: state conclusion**
+
+Scientific interpretation includes:
+
+- statistical decision
+- population quantity
+- significance level
+- biomedical context
+
+**Interpretation**:
+
+- evidence suggests that the targeted biomarker may be associated with increased tumor response probability in the population
+
+- among $n = 100$ biomarker-positive cancer patients, the observed tumor response proportion was substantially larger than what would typically be expected if the true population response probability were 50%
+
+- observed z statistic is $z \approx 2.8$ indicating that the sample response proportion was approximately 2.8 standard errors above the null response probability
+
+- p-value $p \approx 0.0026$ : result this extreme would be very unlikely under the null hypothesis
+
+:::
+
+---
+
+### Summary
+
+::: {style="font-size:0.6em"}
+
+- hypothesis test : an approach for evaluating whether observed sample data are consistent with a proposed population claim
+
+- hypothesis test can be used to help determine whether the observed data are sufficiently inconsistent with the null hypothesis to support an alternative scientific explanation
+
+- hypothesis testing is built on estimation and sampling variability
+- test statistic quantifies evidence relative to the null hypothesis
+- p-value measures inconsistency with the null model
+- conclusions are interpreted in scientific context
+
+:::
+
+---
+
+

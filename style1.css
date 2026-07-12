@@ -1,0 +1,40 @@
+/* styles.css */
+
+/* Inverse (dark background, light text) */
+.inverse {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.inverse h1, 
+.inverse h2, 
+.inverse h3, 
+.inverse p, 
+.inverse li {
+  color: #ffffff !important;
+}
+
+/* Center slide content vertically + horizontally */
+.center, .middle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+/* Title slide styling */
+.title-slide {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+.title-slide h1 {
+  font-size: 2.5em;
+}
+
+.title-slide h2, 
+.title-slide h3 {
+  font-size: 1.5em;
+  font-weight: 300;
+}
+

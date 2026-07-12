@@ -1,0 +1,649 @@
+---
+title: 'One-Way ANOVA: Comparing Group Means'
+author: "<br><br><span style='font-size:22px;'><strong>Lesley Chapman Hannah, Ph.D., M.S.</strong><br>College of Graduate Studies<br>Northeast Ohio Medical University</span>"
+format:
+  revealjs:
+    theme: simple
+    slide-number: true
+    chalkboard: true
+    transition: fade
+    incremental: false
+    code-fold: false
+    code-line-numbers: true
+execute:
+  echo: true
+  warning: false
+  message: false
+editor: visual
+---
+
+```{=html}
+<style>
+.reveal h1, .reveal h2 { color: #2C7BE5; }
+.reveal p, .reveal li { font-size: 0.86em; }
+.small { font-size: 0.72em; }
+.script { font-size: 0.74em; border-left: 5px solid #2C7BE5; padding-left: 0.8em; }
+.callout { border-left: 6px solid #2C7BE5; padding-left: 0.8em; }
+</style>
+```
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(broom)
+
+theme_set(
+  theme_minimal(base_size = 16) +
+    theme(
+      plot.title = element_text(face = "bold"),
+      plot.subtitle = element_text(size = 12),
+      panel.grid.minor = element_blank(),
+      axis.text.x = element_text(angle = 20, hjust = 1)
+    )
+)
+
+set.seed(2026)
+```
+
+### Learning Objectives
+
+-   define one-way ANOVA
+-   describe outcome variable, factor, and factor levels within the context of one-way ANOVA.
+-   explain the null and alternative hypotheses for a one-way ANOVA
+-   interpret the components of the ANOVA table
+-   fit one-way ANOVA model and evaluate the assumptions of the model
+
+------------------------------------------------------------------------
+
+### One-Way ANOVA : Definition
+
+<br> <br>
+
+::: {style="background-color:#e6f3ff; padding:1em; border-radius:6px; border:1px solid #4a90e2;"}
+<p align="center">
+
+<strong>One-Way ANOVA</strong>
+
+</p>
+
+-   statistical method for comparing the means of a continuous outcome across groups defined by **one categorical factor**
+-   evaluates whether the observed differences among sample means are large relative to the variability observed within groups
+-   generalizes the two-sample mean comparison to settings with **three or more groups**
+:::
+
+------------------------------------------------------------------------
+
+### One-Way ANOVA : Definition
+
+<br> <br>
+
+::: {style="background-color:#e6f3ff; padding:1em; border-radius:6px; border:1px solid #4a90e2;"}
+<p align="center">
+
+<strong>One-Way ANOVA</strong>
+
+</p>
+
+-   one-way refers to the number of explanatory factors in the ANOVA model
+
+one-way ANOVA has:
+
+-   one continuous outcome
+-   one categorical factor
+-   two or more factor levels
+:::
+
+------------------------------------------------------------------------
+
+### One-Way ANOVA Model
+
+::: {style="font-size:0.72em"}
+One-way ANOVA model:
+
+$$
+y_{ij} = \mu + \alpha_i + \epsilon_{ij}
+$$
+
+where:
+
+-   $y_{ij}$ : outcome for observational unit $j$ in group $i$
+-   $\mu$ : overall mean level
+-   $\alpha_i$ : effect of group $i$
+-   $\epsilon_{ij}$ : residual variation for observational unit $j$ in group $i$
+:::
+
+------------------------------------------------------------------------
+
+### One-Way ANOVA : Hypotheses
+
+<br>
+
+::: {style="background-color:#e6f3ff; padding:1em; border-radius:6px; border:1px solid #4a90e2;"}
+**Null hypothesis (H₀)**: all population group means are equal.
+
+$$
+\mu_1 = \mu_2 = \mu_3 = \cdots = \mu_k
+$$
+
+**Alternative hypothesis (**$H_A$): at least one population group mean differs from another
+:::
+
+<br>
+
+::: {style="font-size:0.72em"}
+Note: alternative hypothesis does not state which groups differ, instead, states that the group means are not all equal
+:::
+
+------------------------------------------------------------------------
+
+### Key Definition : Outcome Variable
+
+::: {style="background-color:#e6f3ff; padding:1em; border-radius:6px; border:1px solid #4a90e2;"}
+<p align="center">
+
+<strong>Outcome Variable</strong>
+
+</p>
+
+**Outcome variable** is the measured quantity being compared across groups
+:::
+
+<br>
+
+::: {style="font-size:0.74em"}
+In one-way ANOVA, the outcome is usually continuous
+
+Biomedical examples include:
+
+-   systolic blood pressure
+-   PSA level
+-   cholesterol level
+-   tumor volume
+-   gene expression value
+-   biomarker concentration
+:::
+
+------------------------------------------------------------------------
+
+### Key Definition : Factor
+
+::: {style="background-color:#e6f3ff; padding:1em; border-radius:6px; border:1px solid #4a90e2;"}
+<p align="center">
+
+<strong>Factor</strong>
+
+</p>
+
+A **factor** is a categorical explanatory variable that assigns each observational unit to a group.
+:::
+
+<br>
+
+::: {style="font-size:0.74em"}
+Examples of factors include:
+
+-   treatment group
+-   disease subtype
+-   tumor stage
+-   genotype category
+-   hospital unit
+-   exposure category
+
+In one-way ANOVA, there is one factor
+:::
+
+------------------------------------------------------------------------
+
+### Key Definition : Levels
+
+::: {style="background-color:#e6f3ff; padding:1em; border-radius:6px; border:1px solid #4a90e2;"}
+<p align="center">
+
+<strong>Levels</strong>
+
+</p>
+
+The **levels** of a factor are the specific groups being compared.
+:::
+
+<br>
+
+::: {style="font-size:0.74em"}
+If the factor is treatment group, the levels might be:
+
+-   placebo
+-   low-dose drug
+-   high-dose drug
+
+One-way ANOVA evaluates whether the population means for these levels appear equal based on the observed data
+:::
+
+------------------------------------------------------------------------
+
+### One-Way ANOVA: Example Scientific Questions
+
+::: {style="font-size:0.74em"}
+One-way ANOVA can be used when the scientific question asks whether a continuous measurement differs across categories of one grouping variable.
+
+Examples:
+
+-   Do mean PSA levels differ across tumor stage groups?
+-   Do mean biomarker concentrations differ across treatment groups?
+-   Do mean tumor volumes differ across genotype categories?
+-   Do mean blood pressure values differ across lifestyle intervention groups?
+
+Note: each question has one continuous outcome and one categorical factor
+:::
+
+------------------------------------------------------------------------
+
+### Comparison: One-Way ANOVA and t-Test
+
+::: {style="font-size:0.62em"}
+| Feature | Independent-samples t-test | One-way ANOVA |
+|:---|:---|:---|
+| **Outcome** | Continuous | Continuous |
+| **Number of groups** | Two groups | Two or more groups |
+| **Main test statistic** | t statistic | F statistic |
+| **Null hypothesis** | Two population means are equal | All population group means are equal |
+| **Primary result** | Evidence about one mean difference | Evidence that at least one group mean differs |
+:::
+
+------------------------------------------------------------------------
+
+### Why Not Run Many t-Tests?
+
+::: {style="font-size:0.74em"}
+Suppose a study compares mean biomarker levels across four treatment groups
+
+Pairwise t-tests would compare:
+
+-   group 1 vs group 2
+-   group 1 vs group 3
+-   group 1 vs group 4
+-   group 2 vs group 3
+-   group 2 vs group 4
+-   group 3 vs group 4
+
+Possible Outcome:
+
+-   each test creates another opportunity for a false positive result
+
+-   when there are exactly two groups: one-way ANOVA and an independent-samples t-test evaluate the same mean comparison
+
+-   ANOVA extends the mean-comparison logic of the t-test to more than two groups
+:::
+
+------------------------------------------------------------------------
+
+### Biomedical Example Dataset
+
+::: {style="font-size:0.74em"}
+Scientific Question:
+
+<br>
+
+<p align="center">
+
+> <strong>Do mean inflammatory biomarker levels differ across treatment groups?</strong>
+
+</p>
+
+<br>
+
+Note:
+
+-   outcome : biomarker level
+
+-   factor : treatment group
+
+-   levels : placebo, standard dose, and high dose.
+:::
+
+------------------------------------------------------------------------
+
+### Simulate Example Data in R
+
+```{r, echo=FALSE}
+anova_data <- tibble(
+  treatment = rep(c("Placebo", "Standard dose", "High dose"), each = 36),
+  biomarker = c(
+    rnorm(36, mean = 52, sd = 8),
+    rnorm(36, mean = 47, sd = 8),
+    rnorm(36, mean = 42, sd = 8)
+  )
+)
+
+anova_data <- anova_data |>
+  mutate(treatment = factor(treatment, levels = c("Placebo", "Standard dose", "High dose")))
+
+glimpse(anova_data)
+```
+
+::: {style="font-size:0.66em"}
+-   three groups with 36 observations per group
+-   `treatment` variable : coded as a factor because it defines group membership
+-   `biomarker` variable : numeric because it is the continuous outcome being compared across groups
+:::
+
+------------------------------------------------------------------------
+
+### Inspect Group Sizes
+
+```{r, echo=FALSE}
+anova_data |>
+  count(treatment)
+```
+
+::: {style="font-size:0.68em"}
+-   check the number of observations in each group
+
+-   group size affects the precision of group mean estimates
+:::
+
+------------------------------------------------------------------------
+
+### Visualize Data Before Testing
+
+```{r, fig.width=8, fig.height=5, echo=FALSE}
+ggplot(anova_data, aes(x = treatment, y = biomarker)) +
+  geom_boxplot(width = 0.45, outlier.shape = NA) +
+  geom_jitter(width = 0.10, alpha = 0.60) +
+  labs(
+    title = "Biomarker levels by treatment group",
+    subtitle = "One-way ANOVA compares the group means relative to within-group variability",
+    x = "Treatment group",
+    y = "Biomarker level"
+  )
+```
+
+::: {style="font-size:0.66em"}
+-   plot shows both the center and spread of the biomarker values within each treatment group
+-   ANOVA uses this information: how far group means are from each other and how much values vary within each group to calculate the F-statistic, a signal-to-noise ratio that determines whether the differences between group means are statistically significant
+:::
+
+------------------------------------------------------------------------
+
+### Estimate Group Means
+
+```{r group-means}
+group_summary <- anova_data |>
+  group_by(treatment) |>
+  summarize(
+    n = n(),
+    mean_biomarker = mean(biomarker),
+    sd_biomarker = sd(biomarker),
+    .groups = "drop"
+  )
+
+group_summary
+```
+
+::: {style="font-size:0.66em"}
+-   group means provide the descriptive comparison
+-   one-way ANOVA evaluates whether differences among these sample means are large enough relative to within-group variation to provide evidence against equal population means
+:::
+
+------------------------------------------------------------------------
+
+### Variation Within the Model
+
+::: {style="font-size:0.74em"}
+**one-way ANOVA** : asks whether group membership explains enough outcome variation to justify rejecting the equal-means null hypothesis
+
+The total variation is separated into:
+
+-   **between-group variation**: how much the group means differ from the overall mean
+-   **within-group variation**: how much individual observations differ from their own group mean
+
+**F statistic** : compares these two sources of variation after accounting for their degrees of freedom
+:::
+
+------------------------------------------------------------------------
+
+### Manual Pieces of the ANOVA Calculation
+
+```{r manual-ss}
+overall_mean <- mean(anova_data$biomarker)
+
+ss_between <- anova_data |>
+  group_by(treatment) |>
+  summarize(n = n(), group_mean = mean(biomarker), .groups = "drop") |>
+  summarize(ss_between = sum(n * (group_mean - overall_mean)^2)) |>
+  pull(ss_between)
+
+ss_within <- anova_data |>
+  group_by(treatment) |>
+  summarize(ss_within = sum((biomarker - mean(biomarker))^2), .groups = "drop") |>
+  summarize(ss_within = sum(ss_within)) |>
+  pull(ss_within)
+
+c(ss_between = ss_between, ss_within = ss_within)
+```
+
+::: {style="font-size:0.62em"}
+-   code calculates two sources of variation
+-   `ss_between` : measures how far group means are from the overall mean
+-   `ss_within` : measures how far individual observations are from their own group mean
+:::
+
+------------------------------------------------------------------------
+
+### Manual F Statistic
+
+```{r manual-f}
+k <- nlevels(anova_data$treatment)
+n_total <- nrow(anova_data)
+
+df_between <- k - 1
+df_within <- n_total - k
+
+ms_between <- ss_between / df_between
+ms_within <- ss_within / df_within
+
+f_statistic <- ms_between / ms_within
+p_value <- pf(f_statistic, df_between, df_within, lower.tail = FALSE)
+
+c(
+  df_between = df_between,
+  df_within = df_within,
+  ms_between = ms_between,
+  ms_within = ms_within,
+  F = f_statistic,
+  p_value = p_value
+)
+```
+
+::: {style="font-size:0.62em"}
+-   F statistic : between-group mean square divided by the within-group mean square
+
+$$
+F = \frac{\text{variance between groups}}{\text{variance within groups}}
+$$
+
+-   **larger F statistic** : indicates that differences among group means are large relative to the variability observed inside the groups
+:::
+
+------------------------------------------------------------------------
+
+### Fit One-Way ANOVA in R
+
+```{r }
+anova_fit <- aov(biomarker ~ treatment, data = anova_data)
+
+summary(anova_fit)
+```
+
+::: {style="font-size:0.66em"}
+-   `biomarker ~ treatment` : biomarker level is modeled as a function of treatment group
+-   `treatment` : factor $\rightarrow$ R fits a model that estimates differences among treatment-group means
+:::
+
+------------------------------------------------------------------------
+
+### ANOVA Table
+
+::: {style="font-size:0.68em"}
+ANOVA table usually includes:
+
+-   **Df**: degrees of freedom associated with the factor and residual variation
+-   **Sum Sq**: variation attributed to the factor and residual error
+-   **Mean Sq**: sum of squares divided by degrees of freedom
+-   **F value**: ratio of factor mean square to residual mean square
+-   **Pr(\>F)**: p-value for the overall ANOVA F-test
+
+The treatment p-value evaluates the null hypothesis that all treatment-group population means are equal
+:::
+
+------------------------------------------------------------------------
+
+### ANOVA Table
+
+::: {style="font-size:0.68em"}
+ANOVA table usually includes:
+
+-   **Df**: degrees of freedom associated with the factor and residual variation
+-   **Sum Sq**: variation attributed to the factor and residual error
+-   **Mean Sq**: sum of squares divided by degrees of freedom
+-   [**F value**: ratio of factor mean square to residual mean square]{style="color: #0076B6;"}
+-   [**Pr(\>F)**: p-value for the overall ANOVA F-test]{style="color: #0076B6;"}
+:::
+
+------------------------------------------------------------------------
+
+### Fit One-Way ANOVA in R
+
+```{r }
+anova_fit <- aov(biomarker ~ treatment, data = anova_data)
+
+summary(anova_fit)
+```
+
+::: {style="font-size:0.66em"}
+-   ANOVA tells you at least one group mean differs
+
+-   model indicates that treatment has a statistically significant effect on biomarker levels:
+
+    -   F(2, 105) = 13.17
+        -   estimated variability due to treatment differences is about 13 times larger than the average unexplained variability within treatment groups
+    -   p = 7.88 × 10⁻⁶
+
+Note: to identify the specific group differences, perform a post-hoc multi-comparison test \[Tukey's Honest Significant Difference (HSD) test\]
+:::
+
+------------------------------------------------------------------------
+
+### ANOVA: Check Model Assumptions
+
+1.  **normality**: observations in group i are assumed to come from a normal distribution
+2.  **equal (constant) variance**: each group is assumed to have the same population variance
+3.  **independence**: observations should be independent of one another
+
+------------------------------------------------------------------------
+
+### ANOVA Model Assumptions: Residuals by Treatment Group
+
+::: {style="font-size:0.66em"}
+```{r, fig.width=8, fig.height=5, echo=FALSE}
+boxplot(
+  residuals(anova_fit) ~ anova_data$treatment,
+  xlab = "Treatment",
+  ylab = "Residuals",
+  main = "Residuals by Treatment Group"
+)
+
+abline(h = 0, lty = 2)
+```
+
+-   not a formal diagnostic plot
+
+-   Goal: visually assess whether group variances are reasonably similar
+
+-   **residual** : error or difference between an actual observed data point and the value predicted by a statistical model
+
+-   residuals centered near zero in each group
+
+-   similar box heights (similar variability)
+
+-   no group with substantially larger spread
+:::
+
+------------------------------------------------------------------------
+
+### ANOVA Model Assumptions: Equal Variance \[Homoskedacity\]
+
+::: {style="font-size:0.66em"}
+```{r, fig.width=8, fig.height=5, echo=FALSE}
+plot(
+  anova_fit,
+  which = 1
+)
+```
+
+-   **residual** : error or difference between an actual observed data point and the value predicted by a statistical model
+
+residuals vs Fitted (which = 1) — introduces residual diagnostics
+
+-   residuals centered around zero
+-   no obvious curve
+-   similar spread across fitted values
+:::
+
+------------------------------------------------------------------------
+
+### ANOVA Model Assumptions: Test for Normality
+
+```{r, fig.width=8, fig.height=5, echo=FALSE}
+plot(
+  anova_fit,
+  which = 2
+)
+```
+
+::: {style="font-size:0.66em"}
+normal Q-Q Plot (which = 2) — assesses the normality assumption
+
+-   points lying close to the reference line
+-   only small deviations at the tails
+:::
+
+------------------------------------------------------------------------
+
+### ANOVA Model Assumptions: Independence
+
+::: {style="font-size:0.66em"}
+```{r, fig.width=8, fig.height=5, echo=FALSE}
+# extract the residuals
+res <- residuals(anova_fit)
+#plot
+plot(
+  seq_along(res),
+  res,
+  pch = 19,
+  xlab = "Observation Order",
+  ylab = "Residuals",
+  main = "Residuals vs Observation Order"
+)
+
+abline(h = 0, lty = 2, col = "red")
+```
+
+Test: plot maps model errors against the chronological sequence or physical order in which your data was collected
+
+scale-Location Plot (which = 3) — assesses homoscedasticity
+
+Evidence supporting independence:
+
+-   points randomly scattered around zero
+-   no upward or downward trend
+:::
+
+------------------------------------------------------------------------
+
+### Summary
+
+-   introduced one-way ANOVA as a method for comparing means of a continuous outcome across groups
+-   one-way ANOVA extends the two-sample t-test to studies involving two or more groups
+-   F-statistic : constructed by comparing between-group and within-group variation
+-   demonstrated how to fit a one-way ANOVA model and interpret the model output
+
+------------------------------------------------------------------------
